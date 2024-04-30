@@ -1,3 +1,14 @@
+This is a fork from the [show-job gem](https://github.com/binarygit/show-job) by Avii.
+I made a quick and dirty update to format the result of Avii's algorithm into bullet-points and to have it be copied to the clipboard automatically to help me make my weekly Ruby on Rails jobs mega thread I share on LinkedIn.
+
+I disabled all options. Instead, it will list all jobs found for:
+* Worldwide remote jobs
+* USA remote jobs
+* South America remote jobs
+
+This is a very simple script. If you want to use it, you can just clone this repo and run show-job file from the command-line: `ruby show-job`
+
+Below is the Docs for the original [show-job gem](https://github.com/binarygit/show-job)
 # show-job
 
 ## Installation

@@ -12,8 +12,6 @@ class String
 end
 
 class ShowJob
-  attr_reader :jobs
-
   def initialize
     @parser = OptionParser.new
     @jobs   = []
