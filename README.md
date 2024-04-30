@@ -8,6 +8,23 @@ I disabled all options. Instead, it will list all jobs found for:
 
 This is a very simple script. If you want to use it, you can just clone this repo and run show-job file from the command-line: `ruby show-job`
 
+It will generate an output that will also be copied to your clipboard in the following format:
+```
+Jobs last fetched on: April 29, 2024
+
+🌎 𝐑𝐄𝐌𝐎𝐓𝐄 𝐅𝐔𝐋𝐋-𝐓𝐈𝐌𝐄 𝐖𝐎𝐑𝐋𝐃𝐖𝐈𝐃𝐄:
+⚡️ Worldwide Job Example at ___: https://link_example
+...
+
+😌🇺🇸 𝐑𝐄𝐌𝐎𝐓𝐄 𝐅𝐔𝐋𝐋-𝐓𝐈𝐌𝐄 𝐔𝐒𝐀:
+⚡️ USA Job Example at ___: https://link_example
+...
+
+🕺💃 𝐒𝐎𝐔𝐓𝐇 𝐀𝐌𝐄𝐑𝐈𝐂𝐀:
+⚡️ South America Job Example at ___: https://link_example
+...
+```
+
 Below is the Docs for the original [show-job gem](https://github.com/binarygit/show-job)
 # show-job
 

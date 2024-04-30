@@ -41,7 +41,7 @@ class ShowJob
   def add_us_only_jobs
     @jobs << { 'header' => "😌🇺🇸 𝐑𝐄𝐌𝐎𝐓𝐄 𝐅𝐔𝐋𝐋-𝐓𝐈𝐌𝐄 𝐔𝐒𝐀:\n" }
 
-    @jobs += search_for('(US|United States)', true)
+    @jobs += search_for('(US|United States|USA)', true)
   end
 
   def add_south_america_only_jobs
