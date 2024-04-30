@@ -3,38 +3,14 @@ require 'optparse'
 require 'tempfile'
 require 'json'
 require 'open-uri'
+require 'date'
 
 class String
-  def red
-    colorize(31)
-  end
-
-  def light_blue
-    colorize(36)
-  end
-
   def squish
-    gsub(/[[:space:]]+/, " ").strip
+    gsub(/[[:space:]]+/, ' ').strip
   end
-
-  private
-
-  def colorize(color_code)
-    "\e[#{color_code}m#{self}\e[0m"
-  end
-
 end
 
-# A bug is that
-# --ww + --senior should show results
-# that are worldwide openings for seniors.
-# Currently --ww + --senior will show
-# [ww jobs] + [senior jobs]. 
-# The regex should change.
-# It should be looking for both (senior|world)
-# 
-# This could not be a bug and
-# I might just be thinking too much.
 class ShowJob
   attr_reader :jobs
 
@@ -47,55 +23,48 @@ class ShowJob
 
   def show
     add_ww_jobs
-    add_senior_jobs
+    @jobs << { 'blank_line' => 'ww_jobs' }
     add_us_only_jobs
-    add_no_us_jobs
-    if ARGV.empty?
-      puts @parser.help
-      exit
-    end
+    @jobs << { 'blank_line' => 'us_only_jobs' }
+    add_south_america_only_jobs
+    @jobs << { 'blank_line' => 'south_america_only_jobs' }
     @parser.parse!
     show_jobs
   end
 
   private
 
-  # Add support for non-senior jobs
-  # non senior jobs donot contain the word senior in there
-  def add_senior_jobs
-    @parser.on('--senior', 'Display only senior jobs') do |value|
-      @jobs = @jobs + search_for('senior')
-    end
-  end
-
-  # non ww jobs donot contain the word 'world'
-  # donot_search_for('world')
   def add_ww_jobs
-    @parser.on('--ww', 'Display only worldwide jobs') do |value|
-      @jobs = @jobs + search_for('world')
-    end
+    @jobs << { 'header' => "🌎 𝐑𝐄𝐌𝐎𝐓𝐄 𝐅𝐔𝐋𝐋-𝐓𝐈𝐌𝐄 𝐖𝐎𝐑𝐋𝐃𝐖𝐈𝐃𝐄:\n" }
+
+    @jobs += search_for('(world)')
   end
 
   def add_us_only_jobs
-    @parser.on('--us-only', 'Display jobs only for the United States') do |value|
-      @jobs = @jobs + search_for('US|United States', true)
-    end
+    @jobs << { 'header' => "😌🇺🇸 𝐑𝐄𝐌𝐎𝐓𝐄 𝐅𝐔𝐋𝐋-𝐓𝐈𝐌𝐄 𝐔𝐒𝐀:\n" }
+
+    @jobs += search_for('(US|United States)', true)
   end
 
-  def add_no_us_jobs
-    @parser.on('--no-us', 'Display jobs for places other than United States') do |value|
-      @jobs = @jobs + search_for('US|United States', true, false)
-    end
+  def add_south_america_only_jobs
+    @jobs << { 'header' => "🕺💃 𝐒𝐎𝐔𝐓𝐇 𝐀𝐌𝐄𝐑𝐈𝐂𝐀:\n" }
+
+    @jobs += search_for('(South America)')
   end
 
   def search_for(str, sensitive = false, select = true)
     result = []
-    flag = sensitive ? nil : 'i'
-    regex = Regexp.new(str, flag)
+
+    regex = Regexp.new(str, Regexp::IGNORECASE)
+    remote_regex = Regexp.new('(remote)', Regexp::IGNORECASE)
+
     method = select ? :select : :reject
     @fetched_jobs.each do |arr_of_hash|
       result << arr_of_hash.send(method) do |job|
-          job["title"].match?(regex) || job["misc"].match?(regex)
+        (
+          (job['title'].match?(regex) && job['title'].match?(remote_regex)) ||
+          (job['misc'].match?(regex) && job['misc'].match?(remote_regex))
+        )
       end
     end
     result.flatten
@@ -110,16 +79,20 @@ class ShowJob
   end
 
   def prettify
-    result = "\n"
-    jobs.uniq.each do |job|
-      # remoteonruby job titles have a newline in them
-      # which causes the colors to break when displaying.
-      # This is why I am removing the newline here.
-      str = job['title'].squish.red + "\n" + job['misc'].squish.light_blue + "\n" + job['href'] + "\n"
-      result << str
-      result << "-------------------------\n\n"
+    result = "Jobs last fetched on: #{DateTime.parse(@timestamp).strftime('%B %d, %Y')}\n\n"
+
+    @jobs.uniq.each do |job|
+      result << job['header'] if job.key?('header')
+      result << "\n" if job.key?('blank_line')
+
+      next if job['title'].nil?
+
+      result << "⚡️ #{job['title'].squish} at ___: #{job['href']}"
+      result << "\n"
     end
-    result + "Created by avi (avii@hey.com) | Jobs last fetched on: #{@timestamp}"
+
+    IO.popen('pbcopy', 'w') { |f| f << result }
+    result
   end
 end
 
