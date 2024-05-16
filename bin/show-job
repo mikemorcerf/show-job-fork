@@ -85,9 +85,12 @@ class ShowJob
 
       next if job['title'].nil?
 
-      result << "⚡️ #{job['title'].squish} at ___: #{job['href']}"
+      job_title = job['title'].squish
+      result << "⚡️ #{job_title}#{job_title.include?(' at ') ? '' : ' at ___'}: #{job['href']}"
       result << "\n"
     end
+
+    result << "#ruby #programming #computerscience #webdevelopment #softwareengineer #rubyonrails #rubydeveloper #rubyonrailsdeveloper"
 
     IO.popen('pbcopy', 'w') { |f| f << result }
     result
