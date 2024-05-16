@@ -79,6 +79,8 @@ class ShowJob
   def prettify
     result = "Jobs last fetched on: #{DateTime.parse(@timestamp).strftime('%B %d, %Y')}\n\n"
 
+    result << "This week's #RubyOnRails #jobs mega thread is out! All #remote opportunities! Follow for more #RoR job threads! Let's go! 🚂🚂🚂🚂🚂\n\n"
+
     @jobs.uniq.each do |job|
       result << job['header'] if job.key?('header')
       result << "\n" if job.key?('blank_line')
