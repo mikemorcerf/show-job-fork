@@ -22,6 +22,7 @@ class ShowJob
   def show
     add_ww_jobs
     @jobs << { 'blank_line' => 'ww_jobs' }
+    @jobs << { 'header' => "💙🇺🇸 𝐑𝐄𝐌𝐎𝐓𝐄 𝐅𝐔𝐋𝐋-𝐓𝐈𝐌𝐄 𝐄𝐀𝐒𝐘-𝐀𝐏𝐏𝐋𝐘 𝐔𝐒𝐀:\n\n" }
     add_us_only_jobs
     @jobs << { 'blank_line' => 'us_only_jobs' }
     add_south_america_only_jobs
